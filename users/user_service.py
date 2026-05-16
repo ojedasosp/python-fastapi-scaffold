@@ -1,5 +1,6 @@
 from typing import Annotated
 from fastapi import Depends, HTTPException
+from pydantic import EmailStr
 from sqlalchemy.exc import IntegrityError, OperationalError
 
 from dtos import CreateUserDTO, UpdateUserDTO
@@ -52,6 +53,15 @@ class UserService:
         try:
             users = await self._repository.users(offset, limit)
             return users
+        except OperationalError:
+            raise HTTPException(status_code=509, detail="database unavailable")
+
+    async def get_user_by_email(self, email: EmailStr) -> User:
+        try:
+            user = await self._repository.find_by_email(email)
+            if user is None:
+                raise HTTPException(status_code=404, detail="not found")
+            return user
         except OperationalError:
             raise HTTPException(status_code=509, detail="database unavailable")
 

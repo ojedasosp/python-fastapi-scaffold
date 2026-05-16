@@ -1,8 +1,9 @@
-from fastapi import APIRouter, status, Query
+from fastapi import APIRouter, Depends, status, Query
+from auth.auth_service import get_current_user
 from dtos import CreateUserDTO, UpdateUserDTO, UserPublic
 from users.user_service import UserServiceDep
 
-user_router = APIRouter()
+user_router = APIRouter(dependencies=[Depends(get_current_user)])
 
 @user_router.get("/", status_code=status.HTTP_200_OK, response_model=list[UserPublic])
 async def get_users(service: UserServiceDep, offset: int = 0, limit: int = Query(default=10, le=100)):

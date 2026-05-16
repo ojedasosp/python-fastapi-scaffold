@@ -8,7 +8,9 @@ class Config(BaseSettings):
     database_port: str = "5432"
     database_name: str = ""
     database_host: str = "localhost"
-
+    secret_key: str = ""
+    algorithm: str = ""
+    access_token_expire_minutes: int = 30
     model_config = SettingsConfigDict(env_file=".env")
 
     @property
